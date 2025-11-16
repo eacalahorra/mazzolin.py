@@ -24,15 +24,17 @@ def clear_screen():
 
 
 def find_player():
-    candidates = [
-        ("ffplay", [FFPLAY_PATH, "-nodisp", "-autoexit", AUDIO_FILE]),
-        ("afplay", ["afplay", AUDIO_FILE]),  # macOS
-        ("vlc",    ["vlc", "--intf", "dummy", "--play-and-exit", AUDIO_FILE]),
-        ("mpg123", ["mpg123", AUDIO_FILE]),
-    ]
-    for name, cmd in candidates:
-        if shutil.which(name) is not None:
-            return cmd
+    if os.path.exists(FFPLAY_PATH):
+        return [FFPLAY_PATH, "-nodisp", "-autoexit", AUDIO_FILE]
+    if shutil.which("ffplay") is not None:
+        return ["ffplay", "-nodisp", "-autoexit", AUDIO_FILE]
+    if shutil.which("afplay") is not None:
+        return ["afplay", AUDIO_FILE]
+    if shutil.which("vlc") is not None:
+        return ["vlc", "--intf", "dummy", "--play-and-exit", AUDIO_FILE]
+    if shutil.which("mpg123") is not None:
+        return ["mpg123", AUDIO_FILE]
+    
     return None
 
 def typewriter(text, delay=0.03):
